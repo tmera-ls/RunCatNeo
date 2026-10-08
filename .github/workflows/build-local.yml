@@ -1,0 +1,44 @@
+name: Build for local installation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [setup/local-build]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 25
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.5.0.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Build official app source for Apple Silicon
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          xcodebuild -project RunCatNeo.xcodeproj -scheme RunCatNeo \
+            -configuration Release -destination 'generic/platform=macOS' \
+            -derivedDataPath DerivedData -skipPackagePluginValidation \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM='' build
+      - name: Package app and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          ditto -c -k --keepParent DerivedData/Build/Products/Release/RunCatNeo.app artifacts/RunCatNeo-arm64.zip
+          shasum -a 256 artifacts/RunCatNeo-arm64.zip > artifacts/SHA256SUMS
+          printf '%s\n' 'Upstream: https://github.com/runcat-dev/RunCatNeo' \
+            'Upstream revision: b3b1543049ea0a051ecb78654a45f144724ea737' \
+            "Build revision: $GITHUB_SHA" > artifacts/BUILD-INFO.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: RunCatNeo-arm64
+          path: artifacts/
+          retention-days: 30
