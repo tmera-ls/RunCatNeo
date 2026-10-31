@@ -41,6 +41,14 @@ The values above are illustrative — `title`, `symbol`, and the metric labels a
 | `metrics`         | array<Metric\> | yes      | Rows displayed inside the card. Empty array is allowed. |
 | `lastUpdatedDate` | string         | yes      | ISO 8601 timestamp (e.g. `"2026-06-05T04:50:40Z"`) of when the producer wrote this file. Shown as a relative time (`"3 min ago"`) at the bottom of the card; updates automatically. |
 
+### Brand icons in this local build
+
+This fork additionally accepts `"symbol": "brand.claude"` and `"symbol": "brand.openai"`.
+They select bundled Claude and OpenAI Blossom artwork in both the dashboard and Metrics Bar.
+The icons are templates that follow the system appearance. Other symbol names keep their existing SF Symbol behavior.
+No external image paths or network access are needed. These identifiers are not supported by the upstream app.
+See [Brand assets](BrandAssets.md) for provenance and trademark attribution.
+
 ### Metric
 
 | Field             | Type    | Required | Description |

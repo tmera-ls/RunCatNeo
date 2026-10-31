@@ -144,7 +144,16 @@ struct MetricsBarView: View {
         bundle: CustomMetricsBundle
     ) {
         let iconSize = IndicatorKind.categoryIcon.size
-        context.drawIcon(systemName: bundle.snapshot.displaySymbol, point: point, size: iconSize)
+        if bundle.snapshot.usesBrandIcon {
+            // Square template artwork fits within the existing menu-bar icon slot.
+            let side = min(iconSize.width, iconSize.height)
+            let origin = CGPoint(x: point.x + (iconSize.width - side) / 2, y: point.y)
+            context.drawBlackImage(origin: origin, size: CGSize(width: side, height: side)) {
+                bundle.snapshot.displayIcon
+            }
+        } else {
+            context.drawIcon(systemName: bundle.snapshot.displaySymbol, point: point, size: iconSize)
+        }
         point.x += iconSize.width
         let labelSize = IndicatorKind.customValueLabelSize(for: bundle.metricsBarLabel)
         context.drawBlackText(origin: point, size: labelSize) {

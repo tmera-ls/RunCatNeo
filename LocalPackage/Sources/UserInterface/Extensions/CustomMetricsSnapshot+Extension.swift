@@ -19,9 +19,25 @@
  */
 
 import DataSource
+import SwiftUI
 
 extension CustomMetricsSnapshot {
     var displaySymbol: String {
         symbol ?? "chart.bar.horizontal.page.fill"
+    }
+
+    var usesBrandIcon: Bool {
+        displaySymbol == "brand.claude" || displaySymbol == "brand.openai"
+    }
+
+    var displayIcon: Image {
+        switch displaySymbol {
+        case "brand.claude":
+            Image("metric-brand-claude", bundle: .module).renderingMode(.template)
+        case "brand.openai":
+            Image("metric-brand-openai", bundle: .module).renderingMode(.template)
+        default:
+            Image(systemName: displaySymbol)
+        }
     }
 }

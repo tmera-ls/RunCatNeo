@@ -43,7 +43,7 @@ struct CustomMetricsCardView: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
-            Image(systemName: snapshot.displaySymbol)
+            snapshot.displayIcon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
